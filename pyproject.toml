@@ -1,0 +1,11 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "resolution_week2_nxyz109"
+version = "0.0.1"
+dependencies = []
+
+[project.scripts]
+pokedex = "resolution_week2_nxyz109.main:main"

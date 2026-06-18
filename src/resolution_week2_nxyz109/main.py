@@ -43,5 +43,35 @@ def main ():
     elif args.command == "compare":
         req1 = requests.get(f"https://pokeapi.co/api/v2/pokemon/{args.name1.lower()}")
         req2 = requests.get(f"https://pokeapi.co/api/v2/pokemon/{args.name2.lower()}")
-        
+        if req1.status_code != 200:
+            print(f"Couldnt find a pokemon: {args.name1}")
+            sys.exit(1)
+        if req2.status_code !=200:
+             print(f"Couldnt find a pokemon: {args.name2}")
+             sys.exit(1)
+        data1= req1.json()
+        data2= req2.json()
+        stats1= {s["stat"]["name"]: s["base_stat"] for s in data1["stats"]}
+        stats2= {s["stat"]["name"]: s["base_stat"] for s in data2["stats"]}
+        print(f"{data1['name'].title()} vs {data2['name'].title()}")
+        for stat_name in stats1:
+            print(f"{stat_name}: {stats1 [stat_name]} vs {stats2 [stat_name]}")
+    elif args.command == "ability":
+        req = requests.get(f"https://pokeapi.co/api/v2/ability/{args.ability_name.lower()}")
+        if req.status_code != 200:
+            print(f"Could find ability: {args.ability_name}")
+            sys.exit(1)
+        data = req.json()
+        effect_text = "No description availiable"
+        for entry in data["effect_entries"]:
+            if entry["language"]["name"]== "en":
+                effect_text = entry["effect"]
+                break
+        print(f"{data['name'].title()}")
+        print(effect_text)
+    else:
+        parser.print_help(sys.stderr)
+        sys.exit(1)
+if __name__ == "__main__":
+    main()
     
