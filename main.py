@@ -17,12 +17,31 @@ def main ():
     ability_parser.add_argument("ability_name", type=str, help="Name of the ability")
     args = parser.parse_args()
     if args.command == "search":
-        req= requests.get(f"https://pokeapi.co/api/v2/pokemon/ {args.name.lower()}")
+        req= requests.get(f"https://pokeapi.co/api/v2/pokemon/{args.name.lower()}")
         if req.status_code != 200:
             print(f"Couldnt find a pokemon: {args.name}")
             sys.exit(1)
         data= req.json()
         types = [t["type"]["name"] for t in data["types"]]
         abilities = [a["ability"]["name"] for a in data["abilities"]]
-        height_dm = data
+        height_dm = data["height"]
+        weight_hg = data["weight"]
+        if args.imperial:
+            height = height_dm * 3.937
+            weight = weight_hg * 0.220462
+            print(f"{data['name'].title()} (#{data['id']})")
+            print(f"Height: {height:.1f} in")
+            print(f"Weight: {weight:.1f} lb")
+        else:
+            height = height_dm / 10
+            weight = weight_hg / 10
+            print(f"{data['name'].title()} (#{data['id']})")
+            print(f"Height: {height:.1f} m")
+            print(f"Weight: {weight:.1f} kg")
+        print(f"Types: {', '.join(types)}")
+        print(f"Abilities: {', '.join(abilities)}")
+    elif args.command == "compare":
+        req1 = requests.get(f"https://pokeapi.co/api/v2/pokemon/{args.name1.lower()}")
+        req2 = requests.get(f"https://pokeapi.co/api/v2/pokemon/{args.name2.lower()}")
+        
     
